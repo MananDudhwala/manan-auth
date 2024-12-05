@@ -5,8 +5,6 @@ import bodyParser, { BodyParser } from "body-parser";
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
-dotenv.config()
-
 app.use(bodyParser.json())
 
 app.use(cors<Request>({
@@ -19,7 +17,7 @@ app.get("/", (req: Request, res: Response) => {
     res.send("My server");
 });
 
-app.post("/signup", async (request: Request, response: Response) => {
+app.post("/signup/", async (request: Request, response: Response) => {
     console.log(request.body)
     const { firstname, lastname, email, password } = request.body;
 
@@ -35,7 +33,7 @@ app.post("/signup", async (request: Request, response: Response) => {
 
     response.status(201)
     response.send({
-        message:"abcd"
+        message: "received"
     })
 })
 
