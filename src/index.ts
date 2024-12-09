@@ -2,7 +2,9 @@ import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import cors from 'cors';
 import bodyParser, { BodyParser } from "body-parser";
+import { signUp } from "./services/userServices";
 const app: Express = express();
+const cookieSession = require('cookie-session')
 const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json())
@@ -28,13 +30,21 @@ app.post("/signup/", async (request: Request, response: Response) => {
         password: password
     }
 
-
-
+    signUp({
+        user: payload,
+        response: response
+    }).then((data) => {
+        response.send("Congratulations, user created successfully")
+    }).catch((err) => {
+        response.status(400)
+        response.send("user already exists")
+    })
 
     response.status(201)
-    response.send({
-        message: "received"
-    })
+    response.send("user already exists")
+
+
+
 })
 
 app.listen(port, () => {

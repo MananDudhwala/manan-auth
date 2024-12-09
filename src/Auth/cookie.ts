@@ -1,11 +1,11 @@
-import { cookieParser, setCookie } from "@utils/utils";
-import { CookieOptions } from "express";
+import { CookieOptions, Request, Response } from "express";
 import { validateSession } from "./session";
+
 export const SESSION_COOKIE_NAME = "session";
 
 //to store cookies for session management
 
-export const setSessionCookie = async (sessionToken: string, expiresAt: Date) => {
+export const setSessionCookie = async (res: Response, sessionToken: string, expiresAt: Date) => {
     const sessionCookie: {
         name: string,
         value: string,
@@ -22,12 +22,12 @@ export const setSessionCookie = async (sessionToken: string, expiresAt: Date) =>
         }
     }
 
-    setCookie(sessionCookie)
+    res.cookie(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
 }
 
 
 //to delete cookies
-export const deleteSessionCookie = async () => {
+export const deleteSessionCookie = async (res: Response) => {
     const cookie = {
         name: SESSION_COOKIE_NAME,
         value: "",
@@ -39,14 +39,14 @@ export const deleteSessionCookie = async () => {
             maxAge: 0,
         },
     };
-    setCookie(cookie)
+    res.cookie(cookie.name, cookie.value, cookie.attributes);
 }
 
 //need to authenticate every request which comes to the server.
 //if cookie exists, extract session token and validate the session
 // else delete the session
-export const getAuth = () => {
-    const sessionToken = cookieParser(SESSION_COOKIE_NAME);
+export const getAuth = (req: Request) => {
+    const sessionToken = req.cookies[SESSION_COOKIE_NAME] || null;
 
     if (!sessionToken) {
         return { session: null, user: null }
